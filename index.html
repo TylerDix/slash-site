@@ -3,73 +3,488 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slash — Support & Privacy</title>
+    <title>Slash — Subnet Calculator for iPhone, iPad, Mac</title>
+    <meta name="description" content="A fast, beautiful subnet calculator for iPhone, iPad, and Mac. Type or paste any CIDR — see network, range, broadcast, mask, and wildcard instantly. IPv4 + IPv6. Offline. No tracking, ever.">
+    <meta property="og:title" content="Slash — Subnet Calculator">
+    <meta property="og:description" content="A fast, beautiful subnet calculator for iPhone, iPad, and Mac. IPv4 + IPv6. Offline. No tracking.">
+    <meta property="og:image" content="https://tylerdix.github.io/slash-site/images/02-result-ipv4.png">
+    <meta name="theme-color" content="#5856d6">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            color: #1d1d1f;
-            background: #fafafa;
-            line-height: 1.6;
+        :root {
+            --indigo: #5856d6;
+            --indigo-dark: #4845b8;
+            --indigo-light: #7d7be0;
+            --ink: #1d1d1f;
+            --ink-soft: #424245;
+            --muted: #86868b;
+            --bg: #fafafa;
+            --bg-hero: linear-gradient(180deg, #f5f5f7 0%, #ffffff 100%);
+            --card: #ffffff;
+            --border: #e5e5ea;
         }
-        .container { max-width: 640px; margin: 0 auto; padding: 60px 24px; }
-        h1 { font-size: 2rem; margin-bottom: 8px; }
-        .subtitle { color: #86868b; font-size: 1.1rem; margin-bottom: 48px; }
-        h2 { font-size: 1.3rem; margin: 36px 0 12px; }
-        p, li { color: #424245; margin-bottom: 12px; }
-        ul { padding-left: 20px; }
-        a { color: #5856d6; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-        .divider { border: none; border-top: 1px solid #e5e5e5; margin: 48px 0; }
-        .footer { color: #86868b; font-size: 0.85rem; margin-top: 48px; }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --ink: #f5f5f7;
+                --ink-soft: #d1d1d6;
+                --muted: #98989d;
+                --bg: #000000;
+                --bg-hero: linear-gradient(180deg, #1c1c1e 0%, #000000 100%);
+                --card: #1c1c1e;
+                --border: #2c2c2e;
+            }
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            color: var(--ink);
+            background: var(--bg);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        code { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace; font-size: 0.92em; padding: 1px 5px; background: rgba(88,86,214,0.08); border-radius: 4px; color: var(--indigo); }
+        .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+        nav {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        nav .container { display: flex; align-items: center; justify-content: space-between; }
+        .logo {
+            display: flex; align-items: center; gap: 10px;
+            font-weight: 700; font-size: 1.05rem;
+            color: var(--ink); text-decoration: none;
+        }
+        .logo-mark {
+            width: 32px; height: 32px;
+            background: var(--indigo);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 800; font-size: 1.1rem;
+        }
+        nav .links { display: flex; gap: 28px; font-size: 0.95rem; }
+        nav .links a { color: var(--ink-soft); text-decoration: none; }
+        nav .links a:hover { color: var(--indigo); }
+
+        .hero {
+            background: var(--bg-hero);
+            padding: 80px 0 60px;
+            text-align: center;
+            overflow: hidden;
+        }
+        .hero h1 {
+            font-size: clamp(2.4rem, 6vw, 4rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.05;
+            margin-bottom: 16px;
+        }
+        .hero h1 .accent { color: var(--indigo); }
+        .hero .tagline {
+            font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+            color: var(--ink-soft);
+            max-width: 640px;
+            margin: 0 auto 32px;
+        }
+        .hero .platforms {
+            color: var(--muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 28px;
+        }
+        .cta-row {
+            display: flex; gap: 12px; justify-content: center;
+            flex-wrap: wrap; margin-bottom: 56px;
+        }
+        .app-store-badge {
+            display: inline-flex; align-items: center; gap: 12px;
+            background: #000;
+            color: #fff;
+            padding: 14px 22px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: transform 0.15s ease;
+        }
+        .app-store-badge:hover { transform: translateY(-1px); }
+        .app-store-badge svg { width: 28px; height: 28px; flex-shrink: 0; }
+        .app-store-badge .lines { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.1; }
+        .app-store-badge .small { font-size: 0.7rem; opacity: 0.85; }
+        .app-store-badge .big { font-size: 1.15rem; font-weight: 600; }
+
+        .hero-shots {
+            display: flex; justify-content: center; align-items: flex-end;
+            gap: 18px; padding: 0 24px;
+        }
+        .hero-shots img {
+            width: 240px; max-width: 32%;
+            border-radius: 28px;
+            box-shadow: 0 30px 60px -20px rgba(88, 86, 214, 0.25), 0 0 0 1px rgba(0,0,0,0.06);
+        }
+        .hero-shots img:nth-child(2) {
+            width: 280px;
+            transform: translateY(-20px);
+            position: relative;
+            z-index: 2;
+        }
+
+        section.features { padding: 80px 0; }
+        .section-eyebrow {
+            color: var(--indigo);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        section h2 {
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+            font-weight: 700;
+            letter-spacing: -0.015em;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        section .lead {
+            color: var(--ink-soft);
+            text-align: center;
+            max-width: 640px;
+            margin: 0 auto 56px;
+            font-size: 1.1rem;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .feature-card {
+            background: var(--card);
+            padding: 28px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+        .feature-card .icon {
+            width: 40px; height: 40px;
+            background: rgba(88, 86, 214, 0.12);
+            color: var(--indigo);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 16px;
+            font-size: 1.3rem; font-weight: 700;
+        }
+        .feature-card h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .feature-card p {
+            color: var(--ink-soft);
+            font-size: 0.95rem;
+        }
+
+        section.platforms-section {
+            padding: 80px 0;
+            background: var(--bg-hero);
+        }
+        .platform-shot {
+            margin-top: 40px;
+            display: flex; justify-content: center;
+        }
+        .platform-shot img {
+            max-width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 30px 60px -20px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.06);
+        }
+
+        section.privacy-promise { padding: 80px 0; }
+        .promise-list {
+            max-width: 640px; margin: 0 auto;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px 36px;
+        }
+        .promise-list ul { list-style: none; padding: 0; }
+        .promise-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            color: var(--ink);
+            display: flex; align-items: center; gap: 12px;
+        }
+        .promise-list li:last-child { border-bottom: none; }
+        .promise-list .check {
+            color: var(--indigo);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        section.maker {
+            padding: 80px 0;
+            text-align: center;
+        }
+        .maker p {
+            max-width: 640px;
+            margin: 0 auto;
+            color: var(--ink-soft);
+            font-size: 1.05rem;
+        }
+
+        section.cta-final {
+            padding: 80px 0;
+            text-align: center;
+            background: var(--bg-hero);
+        }
+        section.cta-final h2 { margin-bottom: 24px; }
+
+        section.support {
+            padding: 60px 0 40px;
+            border-top: 1px solid var(--border);
+        }
+        section.support .container { max-width: 720px; }
+        section.support h2 { text-align: left; margin-bottom: 16px; font-size: 1.6rem; }
+        section.support p { color: var(--ink-soft); margin-bottom: 12px; }
+        section.support a { color: var(--indigo); text-decoration: none; }
+        section.support a:hover { text-decoration: underline; }
+        .review-cta {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 10px 18px;
+            background: rgba(88, 86, 214, 0.12);
+            color: var(--indigo);
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        section.privacy { padding: 40px 0 80px; }
+        section.privacy .container { max-width: 720px; }
+        section.privacy h2 {
+            text-align: left;
+            margin-bottom: 8px;
+            font-size: 1.6rem;
+        }
+        section.privacy h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin: 28px 0 8px;
+        }
+        section.privacy p, section.privacy li {
+            color: var(--ink-soft);
+            margin-bottom: 8px;
+        }
+        section.privacy ul { padding-left: 20px; margin-bottom: 12px; }
+        section.privacy .effective {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        footer {
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+        footer a { color: var(--muted); text-decoration: none; }
+        footer a:hover { color: var(--indigo); }
+
+        @media (max-width: 600px) {
+            .hero { padding: 60px 0 40px; }
+            .hero-shots { gap: 8px; }
+            .hero-shots img { width: 32%; }
+            .hero-shots img:nth-child(2) { width: 36%; transform: translateY(-12px); }
+            nav .links { display: none; }
+            section.features, section.platforms-section, section.privacy-promise, section.maker, section.cta-final { padding: 56px 0; }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Slash</h1>
-        <p class="subtitle">Subnet Calculator</p>
+    <nav>
+        <div class="container">
+            <a href="#" class="logo">
+                <span class="logo-mark">/</span>
+                Slash
+            </a>
+            <div class="links">
+                <a href="#features">Features</a>
+                <a href="#privacy-section">Privacy</a>
+                <a href="#support-section">Support</a>
+            </div>
+        </div>
+    </nav>
 
-        <h2>Support</h2>
-        <p>Questions, feature requests, or bug reports? Reach out anytime:</p>
-        <p><a href="mailto:tyler.dix@gmail.com">tyler.dix@gmail.com</a></p>
+    <section class="hero">
+        <div class="container">
+            <h1>Subnetting at the speed of <span class="accent">paste.</span></h1>
+            <p class="tagline">Type or paste <code>192.168.1.0/24</code> — see network, range, broadcast, mask, and wildcard instantly. IPv4 and IPv6. iPhone, iPad, Mac. Offline. No tracking, ever.</p>
+            <div class="platforms">iPhone · iPad · Mac · Universal Purchase</div>
+            <div class="cta-row">
+                <a class="app-store-badge" href="https://apps.apple.com/app/id6764183064">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M17.05 20.28c-.98.95-2.05.86-3.08.43-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.43C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01ZM12 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25Z"/>
+                    </svg>
+                    <span class="lines">
+                        <span class="small">Download on the</span>
+                        <span class="big">App Store</span>
+                    </span>
+                </a>
+            </div>
+            <div class="hero-shots">
+                <img src="images/01-empty-ipv4.png" alt="Slash empty state showing the input field and toolbar" loading="lazy">
+                <img src="images/02-result-ipv4.png" alt="Slash showing a subnet calculation result for 192.168.1.0/24" loading="lazy">
+                <img src="images/04-result-ipv6.png" alt="Slash showing an IPv6 calculation for 2001:db8::/48" loading="lazy">
+            </div>
+        </div>
+    </section>
 
-        <hr class="divider">
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-eyebrow">Why Slash</div>
+            <h2>Built by someone who reaches<br>for a subnet calc every day.</h2>
+            <p class="lead">Slash is a real native app on every Apple platform. No web wrappers, no cross-platform shims. Just a fast, accurate subnet calculator that respects your time and your privacy.</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">⚡</div>
+                    <h3>Faster than your finger</h3>
+                    <p>Type or paste a CIDR, mask, or hex notation. Network, range, broadcast, mask, wildcard, and host count populate before you lift your finger.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">⌘</div>
+                    <h3>Cisco-style paste</h3>
+                    <p>Copy <code>192.168.1.1 255.255.255.0</code> from a config or terminal — Slash auto-splits address and mask. Tabs, NBSPs, and multi-space all just work.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">⌥</div>
+                    <h3>IPv4 and IPv6, one app</h3>
+                    <p>Toggle IPv6 — keyboard, examples, and recents flip with it. /31 honors RFC 3021. /32, hostnames, and partial inputs are handled gracefully.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">◐</div>
+                    <h3>Binary view, on tap</h3>
+                    <p>Tap any /N to see the bit-by-bit breakdown — network bits highlighted in indigo, host bits dimmed. A real teaching tool, not a feature checkbox.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">⌐</div>
+                    <h3>Mac-native, not Catalyst</h3>
+                    <p>⌃⌘T floats the window above every other app — keep the calculator visible while you read configs, browse packet captures, or jump between terminals.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">∅</div>
+                    <h3>Zero network calls</h3>
+                    <p>Fully offline. Verify with Airplane Mode or Little Snitch. No accounts, no telemetry, no third-party SDKs. Not now, not ever.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        <h2 id="privacy">Privacy Policy</h2>
-        <p><strong>Effective date:</strong> April 27, 2026</p>
+    <section class="platforms-section">
+        <div class="container">
+            <div class="section-eyebrow">One Universal Purchase</div>
+            <h2>iPhone. iPad. Mac.</h2>
+            <p class="lead">Buy once, run native everywhere. Each platform gets a real Apple-native build — keyboard accessory on iPhone, hardware-keyboard friendly on iPad, menu bar and float-on-top on Mac.</p>
+            <div class="platform-shot">
+                <img src="images/mac-01-result.png" alt="Slash running natively on macOS showing a subnet result window" loading="lazy">
+            </div>
+        </div>
+    </section>
 
-        <p>Slash collects nothing. The app runs entirely on your device with no network connection, no account, and no third parties.</p>
+    <section class="privacy-promise">
+        <div class="container">
+            <div class="section-eyebrow">A short list</div>
+            <h2>Things Slash will never do.</h2>
+            <p class="lead">Privacy isn't a feature. It's the default.</p>
+            <div class="promise-list">
+                <ul>
+                    <li><span class="check">✓</span> No accounts, no sign-in</li>
+                    <li><span class="check">✓</span> No network requests of any kind</li>
+                    <li><span class="check">✓</span> No analytics, crash reporting, or telemetry</li>
+                    <li><span class="check">✓</span> No advertising or advertising identifiers</li>
+                    <li><span class="check">✓</span> No third-party SDKs</li>
+                    <li><span class="check">✓</span> No location, contacts, photos, or device IDs</li>
+                </ul>
+            </div>
+        </div>
+    </section>
 
-        <h2>Data We Collect</h2>
-        <p><strong>None.</strong> Slash does not collect, store, or transmit any personal information.</p>
+    <section class="maker">
+        <div class="container">
+            <div class="section-eyebrow">Who made it</div>
+            <h2>One indie developer.<br>One real native app.</h2>
+            <p>I'm an active CCNA and a working network engineer. I built Slash because every other subnet calculator on the App Store either looks like a 2010 web form, makes a network call to compute something that should run in 50 microseconds, or both. The wedge here is design, speed, and Apple-native polish — not feature count.</p>
+        </div>
+    </section>
 
-        <h2>What Stays On Your Device</h2>
-        <ul>
-            <li><strong>Calculation history</strong> — recent CIDR entries you've typed, kept locally so you can revisit them. Cleared when you tap Clear in the app.</li>
-            <li><strong>Preferences</strong> — your theme, IPv6 toggle, and tip-dismissal choices, stored in standard iOS/macOS app storage.</li>
-        </ul>
-        <p>This data never leaves your device. If you delete the app, it's gone.</p>
+    <section class="cta-final">
+        <div class="container">
+            <h2>Get Slash on the App Store.</h2>
+            <p class="lead">Universal Purchase across iPhone, iPad, and Mac.</p>
+            <div class="cta-row">
+                <a class="app-store-badge" href="https://apps.apple.com/app/id6764183064">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M17.05 20.28c-.98.95-2.05.86-3.08.43-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.43C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01ZM12 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25Z"/>
+                    </svg>
+                    <span class="lines">
+                        <span class="small">Download on the</span>
+                        <span class="big">App Store</span>
+                    </span>
+                </a>
+            </div>
+        </div>
+    </section>
 
-        <h2>What We Do Not Do</h2>
-        <ul>
-            <li>No accounts. No login.</li>
-            <li>No network requests. The app is fully offline.</li>
-            <li>No analytics, crash reporting, or telemetry.</li>
-            <li>No advertising or advertising identifiers.</li>
-            <li>No third-party SDKs of any kind.</li>
-            <li>No location, contacts, photos, or device identifiers.</li>
-        </ul>
+    <section class="support" id="support-section">
+        <div class="container">
+            <h2>Support</h2>
+            <p>Questions, feature requests, or bug reports? Reach out anytime:</p>
+            <p><a href="mailto:tyler.dix@gmail.com">tyler.dix@gmail.com</a></p>
+            <p style="margin-top: 24px;"><a class="review-cta" href="https://apps.apple.com/app/id6764183064?action=write-review">★ Rate Slash on the App Store →</a></p>
+        </div>
+    </section>
 
-        <h2>Children's Privacy</h2>
-        <p>Slash does not collect personal information from anyone, including children. The app is rated 4+ and is safe for all ages.</p>
+    <section class="privacy" id="privacy-section">
+        <div class="container">
+            <h2 id="privacy">Privacy Policy</h2>
+            <p class="effective"><strong>Effective date:</strong> April 27, 2026</p>
 
-        <h2>Changes</h2>
-        <p>If this policy changes, the updated version will be posted here with a new effective date.</p>
+            <p>Slash collects nothing. The app runs entirely on your device with no network connection, no account, and no third parties.</p>
 
-        <h2>Contact</h2>
-        <p>Questions about this policy? Email <a href="mailto:tyler.dix@gmail.com">tyler.dix@gmail.com</a>.</p>
+            <h3>Data We Collect</h3>
+            <p><strong>None.</strong> Slash does not collect, store, or transmit any personal information.</p>
 
-        <p class="footer">&copy; 2026 Tyler Dix. All rights reserved.</p>
-    </div>
+            <h3>What Stays On Your Device</h3>
+            <ul>
+                <li><strong>Calculation history</strong> — recent CIDR entries you've typed, kept locally so you can revisit them. Cleared when you tap Clear in the app.</li>
+                <li><strong>Preferences</strong> — your theme, IPv6 toggle, and tip-dismissal choices, stored in standard iOS/macOS app storage.</li>
+            </ul>
+            <p>This data never leaves your device. If you delete the app, it's gone.</p>
+
+            <h3>What We Do Not Do</h3>
+            <ul>
+                <li>No accounts. No login.</li>
+                <li>No network requests. The app is fully offline.</li>
+                <li>No analytics, crash reporting, or telemetry.</li>
+                <li>No advertising or advertising identifiers.</li>
+                <li>No third-party SDKs of any kind.</li>
+                <li>No location, contacts, photos, or device identifiers.</li>
+            </ul>
+
+            <h3>Children's Privacy</h3>
+            <p>Slash does not collect personal information from anyone, including children. The app is rated 4+ and is safe for all ages.</p>
+
+            <h3>Changes</h3>
+            <p>If this policy changes, the updated version will be posted here with a new effective date.</p>
+
+            <h3>Contact</h3>
+            <p>Questions about this policy? Email <a href="mailto:tyler.dix@gmail.com">tyler.dix@gmail.com</a>.</p>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            &copy; 2026 Dix · <a href="#privacy-section">Privacy</a> · <a href="#support-section">Support</a> · <a href="https://apps.apple.com/app/id6764183064">App Store</a>
+        </div>
+    </footer>
 </body>
 </html>
