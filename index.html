@@ -113,20 +113,37 @@
         .app-store-badge .small { font-size: 0.7rem; opacity: 0.85; }
         .app-store-badge .big { font-size: 1.15rem; font-weight: 600; }
 
+        .hero-media {
+            display: flex; align-items: flex-end; justify-content: center;
+            gap: 24px; padding: 0 24px;
+            flex-wrap: wrap;
+        }
+        .hero-video-wrap {
+            width: 280px;
+            max-width: 100%;
+            border-radius: 36px;
+            overflow: hidden;
+            box-shadow: 0 40px 80px -20px rgba(88, 86, 214, 0.35), 0 0 0 1px rgba(0,0,0,0.06);
+            position: relative;
+            background: #000;
+        }
+        .hero-video-wrap video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
         .hero-shots {
-            display: flex; justify-content: center; align-items: flex-end;
-            gap: 18px; padding: 0 24px;
+            display: flex; align-items: flex-end;
+            gap: 14px;
         }
         .hero-shots img {
-            width: 240px; max-width: 32%;
-            border-radius: 28px;
+            width: 180px; max-width: 26vw;
+            border-radius: 22px;
             box-shadow: 0 30px 60px -20px rgba(88, 86, 214, 0.25), 0 0 0 1px rgba(0,0,0,0.06);
         }
-        .hero-shots img:nth-child(2) {
-            width: 280px;
-            transform: translateY(-20px);
-            position: relative;
-            z-index: 2;
+        @media (max-width: 800px) {
+            .hero-shots { display: none; }
+            .hero-video-wrap { width: 320px; }
         }
 
         section.features { padding: 80px 0; }
@@ -292,9 +309,6 @@
 
         @media (max-width: 600px) {
             .hero { padding: 60px 0 40px; }
-            .hero-shots { gap: 8px; }
-            .hero-shots img { width: 32%; }
-            .hero-shots img:nth-child(2) { width: 36%; transform: translateY(-12px); }
             nav .links { display: none; }
             section.features, section.platforms-section, section.privacy-promise, section.maker, section.cta-final { padding: 56px 0; }
         }
@@ -331,10 +345,16 @@
                     </span>
                 </a>
             </div>
-            <div class="hero-shots">
-                <img src="images/01-empty-ipv4.png" alt="Slash empty state showing the input field and toolbar" loading="lazy">
-                <img src="images/02-result-ipv4.png" alt="Slash showing a subnet calculation result for 192.168.1.0/24" loading="lazy">
-                <img src="images/04-result-ipv6.png" alt="Slash showing an IPv6 calculation for 2001:db8::/48" loading="lazy">
+            <div class="hero-media">
+                <div class="hero-shots">
+                    <img src="images/01-empty-ipv4.png" alt="Slash empty state showing the input field and toolbar" loading="lazy">
+                </div>
+                <div class="hero-video-wrap">
+                    <video src="videos/slash-hero.mp4" autoplay muted loop playsinline preload="auto" aria-label="Slash demo video showing instant subnet calculation"></video>
+                </div>
+                <div class="hero-shots">
+                    <img src="images/04-result-ipv6.png" alt="Slash showing an IPv6 calculation for 2001:db8::/48" loading="lazy">
+                </div>
             </div>
         </div>
     </section>
