@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slash — Subnet Calculator for iPhone, iPad, Mac</title>
-    <meta name="description" content="A fast, beautiful subnet calculator for iPhone, iPad, and Mac. Type or paste any CIDR — see network, range, broadcast, mask, and wildcard instantly. IPv4 + IPv6. Offline. No tracking, ever.">
-    <meta property="og:title" content="Slash — Subnet Calculator">
-    <meta property="og:description" content="A fast, beautiful subnet calculator for iPhone, iPad, and Mac. IPv4 + IPv6. Offline. No tracking.">
+    <title>Slash — Subnetting Practice for iPhone, iPad, Mac</title>
+    <meta name="description" content="Drill the magic-number method with random exam-style subnetting questions until you can solve any subnet in seconds. CCNA &amp; Network+ prep. Cheat sheet, hints, progress tracking. Free. Offline. No tracking.">
+    <meta property="og:title" content="Slash — Subnetting Practice">
+    <meta property="og:description" content="Drill the magic-number method with random exam-style subnetting questions. CCNA &amp; Network+ prep. Free. Offline. No tracking.">
     <meta property="og:image" content="https://tylerdix.github.io/slash-site/images/02-result-ipv4.png">
     <meta name="theme-color" content="#5856d6">
     <style>
@@ -247,6 +247,24 @@
             font-size: 1.05rem;
         }
 
+        section.learn-teaser {
+            padding: 60px 0 40px;
+            text-align: center;
+        }
+        section.learn-teaser .lead { margin-bottom: 0; }
+        .learn-link {
+            display: inline-block;
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: var(--indigo);
+            text-decoration: none;
+            border: 1px solid var(--indigo);
+            padding: 12px 22px;
+            border-radius: 10px;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+        .learn-link:hover { background: var(--indigo); color: white; }
+
         section.cta-final {
             padding: 80px 0;
             text-align: center;
@@ -323,6 +341,7 @@
             </a>
             <div class="links">
                 <a href="#features">Features</a>
+                <a href="learn/subnetting/">Learn</a>
                 <a href="#privacy-section">Privacy</a>
                 <a href="#support-section">Support</a>
             </div>
@@ -331,9 +350,9 @@
 
     <section class="hero">
         <div class="container">
-            <h1>Subnetting at the speed of <span class="accent">paste.</span></h1>
-            <p class="tagline">Type or paste <code>192.168.1.0/24</code> — see network, range, broadcast, mask, and wildcard instantly. IPv4 and IPv6. iPhone, iPad, Mac. Offline. No tracking, ever.</p>
-            <div class="platforms">iPhone · iPad · Mac · Universal Purchase</div>
+            <h1>The magic-number method, <span class="accent">drilled until it sticks.</span></h1>
+            <p class="tagline">Random exam-style subnetting questions. Step-by-step reveals. A cheat sheet one tap away. Built for the CCNA and Network+ candidate who wants to solve any subnet in seconds.</p>
+            <div class="platforms">iPhone · iPad · Mac · Free</div>
             <div class="cta-row">
                 <a class="app-store-badge" href="https://apps.apple.com/app/id6764183064">
                     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -346,14 +365,8 @@
                 </a>
             </div>
             <div class="hero-media">
-                <div class="hero-shots">
-                    <img src="images/01-empty-ipv4.png" alt="Slash empty state showing the input field and toolbar" loading="lazy">
-                </div>
                 <div class="hero-video-wrap">
-                    <video src="videos/slash-hero.mp4" autoplay muted loop playsinline preload="auto" aria-label="Slash demo video showing instant subnet calculation"></video>
-                </div>
-                <div class="hero-shots">
-                    <img src="images/04-result-ipv6.png" alt="Slash showing an IPv6 calculation for 2001:db8::/48" loading="lazy">
+                    <video src="videos/slash-hero.mp4" autoplay muted loop playsinline preload="auto" aria-label="Slash demo video showing the practice tab and magic-number method"></video>
                 </div>
             </div>
         </div>
@@ -361,39 +374,39 @@
 
     <section class="features" id="features">
         <div class="container">
-            <div class="section-eyebrow">Why Slash</div>
-            <h2>Built by someone who reaches<br>for a subnet calc every day.</h2>
-            <p class="lead">Slash is a real native app on every Apple platform. No web wrappers, no cross-platform shims. Just a fast, accurate subnet calculator that respects your time and your privacy.</p>
+            <div class="section-eyebrow">How it works</div>
+            <h2>Practice until your fingers<br>know the method.</h2>
+            <p class="lead">Slash drills the magic-number method with random questions until you can solve any subnet in seconds. Wrong answers teach. Right answers build confidence. The cheat sheet is always one tap away.</p>
             <div class="feature-grid">
                 <div class="feature-card">
-                    <div class="icon">⚡</div>
-                    <h3>Faster than your finger</h3>
-                    <p>Type or paste a CIDR, mask, or hex notation. Network, range, broadcast, mask, wildcard, and host count populate before you lift your finger.</p>
+                    <div class="icon">?</div>
+                    <h3>Random exam-style questions</h3>
+                    <p>Find the network, broadcast, first or last usable host. Mixed text-input and multiple-choice — both modes mirror the CCNA exam format.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="icon">⌘</div>
-                    <h3>Cisco-style paste</h3>
-                    <p>Copy <code>192.168.1.1 255.255.255.0</code> from a config or terminal — Slash auto-splits address and mask. Tabs, NBSPs, and multi-space all just work.</p>
+                    <div class="icon">↓</div>
+                    <h3>Step-by-step reveals</h3>
+                    <p>Get it wrong and Slash walks the magic-number method for that question, shows the full subnet, and gives you a "Quick Way" shortcut.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="icon">⌥</div>
-                    <h3>IPv4 and IPv6, one app</h3>
-                    <p>Toggle IPv6 — keyboard, examples, and recents flip with it. /31 honors RFC 3021. /32, hostnames, and partial inputs are handled gracefully.</p>
+                    <div class="icon">▦</div>
+                    <h3>Cheat sheet, one tap away</h3>
+                    <p>The magic-box grid — the same 8-column row you'd scribble on the laminated sheet at Pearson VUE. Accessible from any question via the table icon.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="icon">◐</div>
-                    <h3>Binary view, on tap</h3>
-                    <p>Tap any /N to see the bit-by-bit breakdown — network bits highlighted in indigo, host bits dimmed. A real teaching tool, not a feature checkbox.</p>
+                    <div class="icon">💡</div>
+                    <h3>Hint button</h3>
+                    <p>Surfaces the magic number for the current question with a link to the full cheat sheet. A nudge, not the answer.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="icon">⌐</div>
-                    <h3>Mac-native, not Catalyst</h3>
-                    <p>⌃⌘T floats the window above every other app — keep the calculator visible while you read configs, browse packet captures, or jump between terminals.</p>
+                    <div class="icon">◎</div>
+                    <h3>Progress and milestones</h3>
+                    <p>Track total accuracy and per-question-type performance. Earn the "You're Ready" badge at 50 correct with 90% accuracy. No streak guilt, no daily nag.</p>
                 </div>
                 <div class="feature-card">
                     <div class="icon">∅</div>
                     <h3>Zero network calls</h3>
-                    <p>Fully offline. Verify with Airplane Mode or Little Snitch. No accounts, no telemetry, no third-party SDKs. Not now, not ever.</p>
+                    <p>Fully offline. No accounts, no telemetry, no third-party SDKs. Not now, not ever. Verify with Airplane Mode.</p>
                 </div>
             </div>
         </div>
@@ -401,9 +414,9 @@
 
     <section class="platforms-section">
         <div class="container">
-            <div class="section-eyebrow">One Universal Purchase</div>
+            <div class="section-eyebrow">Free · Universal Purchase</div>
             <h2>iPhone. iPad. Mac.</h2>
-            <p class="lead">Buy once, run native everywhere. Each platform gets a real Apple-native build — keyboard accessory on iPhone, hardware-keyboard friendly on iPad, menu bar and float-on-top on Mac.</p>
+            <p class="lead">One download, every Apple platform. Each gets a real native build — keyboard accessory on iPhone, hardware-keyboard friendly on iPad, menu bar and float-on-top on Mac. The calculator tab is still there for ad-hoc lookups.</p>
             <div class="platform-shot">
                 <img src="images/mac-01-result.png" alt="Slash running natively on macOS showing a subnet result window" loading="lazy">
             </div>
@@ -432,14 +445,25 @@
         <div class="container">
             <div class="section-eyebrow">Who made it</div>
             <h2>One indie developer.<br>One real native app.</h2>
-            <p>I'm an active CCNA and a working network engineer. I built Slash because every other subnet calculator on the App Store either looks like a 2010 web form, makes a network call to compute something that should run in 50 microseconds, or both. The wedge here is design, speed, and Apple-native polish — not feature count.</p>
+            <p>Built by a CCNA who passed using this exact method. Slash is one focused thing: the magic-number method, drilled until your fingers know it, with native iOS polish and a cheat sheet you can write at the testing center.</p>
+        </div>
+    </section>
+
+    <section class="learn-teaser">
+        <div class="container">
+            <div class="section-eyebrow">Learn</div>
+            <h2>The math behind the method.</h2>
+            <p class="lead">Every CCNA candidate relearns subnetting from scratch at least once. We wrote a short visual guide to the magic-number method — the same model Slash is built on.</p>
+            <div style="text-align: center; margin-top: 32px;">
+                <a href="learn/subnetting/" class="learn-link">Subnet math for engineers who keep forgetting it →</a>
+            </div>
         </div>
     </section>
 
     <section class="cta-final">
         <div class="container">
-            <h2>Get Slash on the App Store.</h2>
-            <p class="lead">Universal Purchase across iPhone, iPad, and Mac.</p>
+            <h2>Get Slash free on the App Store.</h2>
+            <p class="lead">Free. Universal Purchase across iPhone, iPad, and Mac.</p>
             <div class="cta-row">
                 <a class="app-store-badge" href="https://apps.apple.com/app/id6764183064">
                     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -466,7 +490,7 @@
     <section class="privacy" id="privacy-section">
         <div class="container">
             <h2 id="privacy">Privacy Policy</h2>
-            <p class="effective"><strong>Effective date:</strong> April 27, 2026</p>
+            <p class="effective"><strong>Effective date:</strong> May 5, 2026</p>
 
             <p>Slash collects nothing. The app runs entirely on your device with no network connection, no account, and no third parties.</p>
 
@@ -475,8 +499,9 @@
 
             <h3>What Stays On Your Device</h3>
             <ul>
+                <li><strong>Practice stats</strong> — total questions answered, accuracy, per-question-type performance, milestone progress, and the You're Ready badge state. Stored locally; reset anytime in Settings.</li>
                 <li><strong>Calculation history</strong> — recent CIDR entries you've typed, kept locally so you can revisit them. Cleared when you tap Clear in the app.</li>
-                <li><strong>Preferences</strong> — your theme, IPv6 toggle, and tip-dismissal choices, stored in standard iOS/macOS app storage.</li>
+                <li><strong>Preferences</strong> — your theme, IPv6 toggle, welcome sheet state, and other choices, stored in standard iOS/macOS app storage.</li>
             </ul>
             <p>This data never leaves your device. If you delete the app, it's gone.</p>
 
