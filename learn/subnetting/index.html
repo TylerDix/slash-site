@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subnetting in your head: the magic-number method</title>
+    <meta name="description" content="The method experienced network engineers and CCNA candidates actually use to subnet without binary. Find network and broadcast addresses with one number and a row of powers of two.">
+    <meta property="og:title" content="Subnetting in your head: the magic-number method">
+    <meta property="og:description" content="No binary. No memorizing tables. The way working engineers and CCNA candidates actually subnet — with one number and a row of powers.">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="https://tylerdix.github.io/slash-site/images/02-result-ipv4.png">
+    <meta name="theme-color" content="#5856d6">
+    <link rel="canonical" href="https://tylerdix.github.io/slash-site/learn/subnetting/">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Subnetting in your head: the magic-number method",
+      "description": "The method experienced network engineers and CCNA candidates actually use to subnet without binary. Find network and broadcast addresses with one number and a row of powers of two.",
+      "image": "https://tylerdix.github.io/slash-site/images/02-result-ipv4.png",
+      "author": {
+        "@type": "Person",
+        "name": "Tyler Dix"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Slash",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://tylerdix.github.io/slash-site/images/02-result-ipv4.png"
+        }
+      },
+      "datePublished": "2026-05-04",
+      "dateModified": "2026-05-04",
+      "mainEntityOfPage": "https://tylerdix.github.io/slash-site/learn/subnetting/"
+    }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --indigo: #5856d6;
+            --indigo-dark: #4845b8;
+            --ink: #1d1d1f;
+            --ink-soft: #424245;
+            --muted: #86868b;
+            --bg: #fafafa;
+            --card: #ffffff;
+            --border: #e5e5ea;
+            --magic: #5856d6;
+            --magic-bg: rgba(88,86,214,0.10);
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --ink: #f5f5f7;
+                --ink-soft: #d1d1d6;
+                --muted: #98989d;
+                --bg: #000;
+                --card: #1c1c1e;
+                --border: #2c2c2e;
+                --magic-bg: rgba(88,86,214,0.18);
+            }
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            color: var(--ink);
+            background: var(--bg);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        a { color: var(--indigo); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        code, .mono { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace; }
+        code { font-size: 0.92em; padding: 1px 6px; background: rgba(88,86,214,0.08); border-radius: 4px; color: var(--indigo); }
+        .container { max-width: 720px; margin: 0 auto; padding: 0 24px; }
+        nav { padding: 20px 0; border-bottom: 1px solid var(--border); }
+        nav .container { display: flex; align-items: center; justify-content: space-between; }
+        .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--ink); }
+        .logo-mark {
+            width: 32px; height: 32px; background: var(--indigo); border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 800; font-size: 1.1rem;
+        }
+        nav .home { color: var(--ink-soft); font-size: 0.95rem; }
+        nav .home:hover { color: var(--indigo); text-decoration: none; }
+        article { padding: 56px 0 80px; }
+        article .eyebrow {
+            color: var(--indigo);
+            font-size: 0.85rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.08em;
+            margin-bottom: 14px;
+        }
+        article h1 {
+            font-size: clamp(2rem, 4.5vw, 2.8rem);
+            font-weight: 700; letter-spacing: -0.02em;
+            line-height: 1.15; margin-bottom: 18px;
+        }
+        article .deck {
+            font-size: 1.15rem;
+            color: var(--ink-soft);
+            margin-bottom: 36px;
+        }
+        article h2 {
+            font-size: 1.5rem; font-weight: 700;
+            letter-spacing: -0.01em;
+            margin: 56px 0 16px;
+        }
+        article h3 {
+            font-size: 1.15rem; font-weight: 600;
+            margin: 32px 0 10px;
+        }
+        article p { margin-bottom: 18px; color: var(--ink); }
+        article ul, article ol { margin: 0 0 18px 22px; }
+        article li { margin-bottom: 6px; }
+        article hr {
+            border: none; border-top: 1px solid var(--border);
+            margin: 56px 0;
+        }
+        .powers-row {
+            display: flex; gap: 6px; flex-wrap: wrap;
+            margin: 16px 0 8px;
+        }
+        .power {
+            min-width: 52px;
+            padding: 10px 8px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            text-align: center;
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: var(--ink-soft);
+        }
+        .power.magic {
+            background: var(--magic-bg);
+            border-color: rgba(88,86,214,0.45);
+            color: var(--magic);
+            font-weight: 700;
+        }
+        .power.kept {
+            background: rgba(52, 199, 89, 0.10);
+            border-color: rgba(52, 199, 89, 0.45);
+            color: #248a3d;
+            font-weight: 700;
+        }
+        @media (prefers-color-scheme: dark) {
+            .power.kept { color: #30d158; background: rgba(52, 199, 89, 0.16); }
+        }
+        .powers-label {
+            font-size: 0.75rem; color: var(--muted);
+            margin-bottom: 6px; font-family: -apple-system, sans-serif;
+            text-transform: uppercase; letter-spacing: 0.08em;
+        }
+        .callout {
+            margin: 24px 0;
+            padding: 18px 22px;
+            background: rgba(88,86,214,0.06);
+            border-left: 3px solid var(--indigo);
+            border-radius: 0 8px 8px 0;
+            color: var(--ink);
+            font-size: 0.97rem;
+        }
+        .callout strong { color: var(--indigo); }
+        .example {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 24px 0;
+        }
+        .example .label {
+            color: var(--muted);
+            font-size: 0.78rem; text-transform: uppercase;
+            letter-spacing: 0.08em; font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .example .input {
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+            font-size: 1.4rem; font-weight: 500;
+            margin-bottom: 14px;
+        }
+        .example table { width: 100%; border-collapse: collapse; }
+        .example th, .example td {
+            text-align: left;
+            padding: 6px 0;
+            font-size: 0.95rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .example tr:last-child th, .example tr:last-child td { border-bottom: none; }
+        .example th {
+            color: var(--muted);
+            font-weight: 500;
+            width: 110px;
+        }
+        .example td {
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+        }
+        .cheatsheet {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin: 24px 0;
+            overflow: hidden;
+        }
+        .cheatsheet table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+        .cheatsheet th, .cheatsheet td {
+            padding: 9px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .cheatsheet thead th {
+            background: rgba(88,86,214,0.06);
+            color: var(--ink);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .cheatsheet tbody th {
+            font-weight: 500;
+            color: var(--ink-soft);
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+            width: 70px;
+        }
+        .cheatsheet tbody td {
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+        }
+        .cheatsheet tbody td.magic {
+            color: var(--magic);
+            font-weight: 600;
+        }
+        .cheatsheet tbody tr:last-child th,
+        .cheatsheet tbody tr:last-child td { border-bottom: none; }
+        .cta-card {
+            margin: 56px 0 0;
+            padding: 32px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            text-align: center;
+        }
+        .cta-card h3 {
+            font-size: 1.25rem; margin-bottom: 8px;
+        }
+        .cta-card p {
+            color: var(--ink-soft);
+            margin-bottom: 20px;
+        }
+        .cta-card a.btn {
+            display: inline-block;
+            background: var(--indigo); color: white;
+            padding: 12px 22px; border-radius: 10px;
+            font-weight: 500; text-decoration: none;
+            transition: transform 0.15s ease, background 0.15s ease;
+        }
+        .cta-card a.btn:hover { background: var(--indigo-dark); transform: translateY(-1px); }
+        footer {
+            padding: 32px 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+        footer a { color: var(--ink-soft); }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="container">
+        <a href="/slash-site/" class="logo">
+            <div class="logo-mark">/</div>
+            Slash
+        </a>
+        <a href="/slash-site/" class="home">← Home</a>
+    </div>
+</nav>
+
+<article>
+    <div class="container">
+        <div class="eyebrow">Subnetting</div>
+        <h1>Subnetting in your head: the magic-number method</h1>
+        <p class="deck">Most engineers and CCNA candidates relearn subnetting twice a year. The reason isn't that the math is hard — it's that the standard tutorial leads with binary. Here's the method working network engineers actually use on the job and on the exam: one number, a row of powers of two, and the answer falls out.</p>
+
+        <h2>The cheat sheet you draw on exam day</h2>
+        <p>Before you read another tutorial, learn the table experienced engineers actually scribble on the laminated paper they hand you at a Cisco exam. It's the entire game in 17 rows.</p>
+
+        <div class="cheatsheet">
+            <table>
+                <thead>
+                    <tr><th>Prefix</th><th>Subnet mask</th><th>Magic number</th><th>Usable hosts</th></tr>
+                </thead>
+                <tbody>
+                    <tr><th>/16</th><td>255.255.0.0</td><td class="magic">1 (oct 2)</td><td>65,534</td></tr>
+                    <tr><th>/17</th><td>255.255.128.0</td><td class="magic">128</td><td>32,766</td></tr>
+                    <tr><th>/18</th><td>255.255.192.0</td><td class="magic">64</td><td>16,382</td></tr>
+                    <tr><th>/19</th><td>255.255.224.0</td><td class="magic">32</td><td>8,190</td></tr>
+                    <tr><th>/20</th><td>255.255.240.0</td><td class="magic">16</td><td>4,094</td></tr>
+                    <tr><th>/21</th><td>255.255.248.0</td><td class="magic">8</td><td>2,046</td></tr>
+                    <tr><th>/22</th><td>255.255.252.0</td><td class="magic">4</td><td>1,022</td></tr>
+                    <tr><th>/23</th><td>255.255.254.0</td><td class="magic">2</td><td>510</td></tr>
+                    <tr><th>/24</th><td>255.255.255.0</td><td class="magic">1 (oct 3)</td><td>254</td></tr>
+                    <tr><th>/25</th><td>255.255.255.128</td><td class="magic">128</td><td>126</td></tr>
+                    <tr><th>/26</th><td>255.255.255.192</td><td class="magic">64</td><td>62</td></tr>
+                    <tr><th>/27</th><td>255.255.255.224</td><td class="magic">32</td><td>30</td></tr>
+                    <tr><th>/28</th><td>255.255.255.240</td><td class="magic">16</td><td>14</td></tr>
+                    <tr><th>/29</th><td>255.255.255.248</td><td class="magic">8</td><td>6</td></tr>
+                    <tr><th>/30</th><td>255.255.255.252</td><td class="magic">4</td><td>2</td></tr>
+                    <tr><th>/31</th><td>255.255.255.254</td><td class="magic">2</td><td>2</td></tr>
+                    <tr><th>/32</th><td>255.255.255.255</td><td class="magic">1</td><td>1</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p>Look at the patterns. The mask column climbs through <strong>128, 192, 224, 240, 248, 252, 254, 255</strong> — the same eight numbers you'll see across every octet. The magic-number column inverts: <strong>128, 64, 32, 16, 8, 4, 2, 1</strong>. Those are your powers of two. They're the only numbers you ever actually need to know.</p>
+
+        <h2>The magic number, defined</h2>
+        <p>Take any subnet mask. Find the octet that isn't <code>0</code> or <code>255</code> — call it the <em>interesting octet</em>. Subtract it from 256. That's the magic number.</p>
+
+        <div class="example">
+            <div class="label">Worked: 255.255.255.192</div>
+            <p style="font-size: 0.97rem; margin: 0;">Interesting octet = <code>192</code>. Magic number = <code>256 − 192 = 64</code>. So this subnet has <strong>64 addresses</strong>, and subnet boundaries land at every multiple of 64 in the last octet: <code>0, 64, 128, 192</code>.</p>
+        </div>
+
+        <p>That's the magic number's whole job. It tells you the size of each subnet block, and where the boundaries fall.</p>
+
+        <h2>Find the network address</h2>
+        <p>Given <code>192.168.1.137</code> with mask <code>255.255.255.192</code>, the magic number is <strong>64</strong>. The boundaries in the last octet are <code>0, 64, 128, 192</code>. <code>137</code> falls between <code>128</code> and <code>192</code>, so the network is <code>192.168.1.128</code>.</p>
+
+        <p>You can do this without a calculator: divide the address octet by the magic number, drop the remainder, multiply back. <code>137 ÷ 64 = 2 r 9</code>, so <code>2 × 64 = 128</code>. Network = <code>192.168.1.128</code>.</p>
+
+        <h2>The powers-of-two shortcut</h2>
+        <p>Working engineers don't divide. They walk a row of powers from left to right, keeping ones that fit.</p>
+
+        <div class="powers-label">Powers of two — the only numbers you need</div>
+        <div class="powers-row">
+            <div class="power">128</div>
+            <div class="power">64</div>
+            <div class="power">32</div>
+            <div class="power">16</div>
+            <div class="power">8</div>
+            <div class="power">4</div>
+            <div class="power">2</div>
+            <div class="power">1</div>
+        </div>
+
+        <p>Same example: <code>192.168.1.137</code>, mask <code>255.255.255.192</code>, magic number <strong>64</strong>. To find the network, walk the row, keep numbers that are <strong>at least the magic number</strong> and that <strong>fit into the address octet (137)</strong> without going over:</p>
+
+        <div class="powers-row">
+            <div class="power kept">128</div>
+            <div class="power magic">64</div>
+            <div class="power" style="opacity:0.4">32</div>
+            <div class="power" style="opacity:0.4">16</div>
+            <div class="power" style="opacity:0.4">8</div>
+            <div class="power" style="opacity:0.4">4</div>
+            <div class="power" style="opacity:0.4">2</div>
+            <div class="power" style="opacity:0.4">1</div>
+        </div>
+
+        <p><code>128</code> fits into <code>137</code> (with 9 left over). <code>64</code> doesn't fit into 9, so we skip it. <code>32, 16, 8, 4, 2, 1</code> are below the magic number, so we stop there. Sum what we kept: <code>128</code>. Network = <code>192.168.1.128</code>.</p>
+
+        <p>That's the whole technique. The magic number tells you when to stop walking the row. Anything you keep adds up to the network's value in the interesting octet.</p>
+
+        <h2>Find the broadcast address</h2>
+        <p>The broadcast is the last address in the subnet — one less than the start of the next subnet. Once you have the network and the magic number, the broadcast is one subtraction away.</p>
+
+        <div class="example">
+            <div class="label">Worked: 192.168.1.137 with mask 255.255.255.192</div>
+            <table>
+                <tr><th>Network</th><td>192.168.1.128</td></tr>
+                <tr><th>Next network</th><td>192.168.1.192 (network + magic = 128 + 64)</td></tr>
+                <tr><th>Broadcast</th><td>192.168.1.191 (next network − 1)</td></tr>
+                <tr><th>First usable</th><td>192.168.1.129 (network + 1)</td></tr>
+                <tr><th>Last usable</th><td>192.168.1.190 (broadcast − 1)</td></tr>
+            </table>
+        </div>
+
+        <p>Five answers from one method. No binary, no memorizing.</p>
+
+        <h2>Cross-octet masks (255.255.252.0 and friends)</h2>
+        <p>The trickier exam questions hide the interesting octet in the third position instead of the fourth. Same method — just shift left.</p>
+
+        <div class="example">
+            <div class="label">Worked: 10.5.137.42 with mask 255.255.252.0</div>
+            <p style="font-size: 0.97rem; margin: 0 0 12px;">Interesting octet = the third one (<code>252</code>). Magic number = <code>256 − 252 = 4</code>. So subnet boundaries fall every 4 in the third octet: <code>0, 4, 8, 12, … 136, 140, …</code></p>
+            <p style="font-size: 0.97rem; margin: 0 0 12px;"><code>137</code> falls between <code>136</code> and <code>140</code>. The network's third octet is <strong>136</strong>. Once the third octet snaps to a boundary, the fourth wraps from <code>0</code> to <code>255</code> — that's the rest of the subnet.</p>
+            <table>
+                <tr><th>Network</th><td>10.5.136.0</td></tr>
+                <tr><th>Broadcast</th><td>10.5.139.255</td></tr>
+                <tr><th>Hosts</th><td>1,022</td></tr>
+            </table>
+        </div>
+
+        <div class="callout">
+            <strong>The walking-the-row version:</strong> magic number 4, walk from 128. Keep what fits into 137 and is ≥ 4: <code>128 + 8 = 136</code>. That's the third octet of the network.
+        </div>
+
+        <h2>Two special cases worth memorizing</h2>
+
+        <h3>The mask 255.255.255.254</h3>
+        <p>Looks broken. It isn't. <a href="https://datatracker.ietf.org/doc/html/rfc3021">RFC 3021</a> formalized using both addresses on point-to-point links — saving you four IPs every time you connect two routers. Modern Cisco IOS, Juniper, and Linux all honor it; older equipment may not.</p>
+
+        <h3>The mask 255.255.255.255</h3>
+        <p>A single host. Used for loopbacks, host routes, and "this exact IP" rules in firewalls. There's no range and no broadcast — the address <em>is</em> the network.</p>
+
+        <h2>What about IPv6?</h2>
+        <p>IPv6 doesn't use dotted-decimal masks. The prefix length stands on its own (<code>2001:db8::/48</code>), and there's no broadcast — multicast replaces it. The three cuts to recognize on the exam: <code>/48</code> is what an ISP delegates to a site; <code>/64</code> is the universal LAN size (per RFC 4291); <code>/128</code> is a single host. The host space inside a <code>/64</code> is so large no one calculates a "broadcast address" — questions about IPv6 usually ask whether one address falls inside a given prefix.</p>
+
+        <hr>
+
+        <div class="cta-card">
+            <h3>Practice it until it's automatic</h3>
+            <p>Slash is a study companion for engineers and CCNA candidates. The Practice tab generates random questions across <code>/22</code>, <code>/23</code>, and <code>/25</code>–<code>/30</code>, drills you on network/broadcast/first/last host with the magic-number method, and shows the powers-of-two row with your magic number highlighted on every reveal. The cheat sheet above lives in the app, the calculator's still there for spot-checks. Free on iPhone, iPad, and Mac.</p>
+            <a href="https://apps.apple.com/app/id6764183064" class="btn">Download Slash</a>
+        </div>
+    </div>
+</article>
+
+<footer>
+    <div class="container">
+        <a href="/slash-site/">Home</a> · <a href="/slash-site/#privacy">Privacy</a> · <a href="https://apps.apple.com/app/id6764183064">App Store</a>
+        <p style="margin-top: 12px;">© 2026 Dix</p>
+    </div>
+</footer>
+
+</body>
+</html>
