@@ -172,6 +172,24 @@
         .app-store-badge .small { font-size: 0.68rem; opacity: 0.85; }
         .app-store-badge .big { font-size: 1.1rem; font-weight: 600; }
 
+        .hero-video-wrap {
+            margin: 38px auto 0;
+            width: min(360px, 86vw);
+            aspect-ratio: 3 / 4;
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow:
+                0 30px 60px -20px rgba(123, 97, 255, 0.35),
+                0 0 0 1px rgba(0, 0, 0, 0.06);
+            background: var(--bg-soft);
+        }
+        .hero-video-wrap video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
         .lead {
             color: var(--ink-soft);
             text-align: center;
@@ -418,13 +436,16 @@
                     <span class="big">App Store</span>
                 </span>
             </a>
+            <div class="hero-video-wrap">
+                <video src="videos/slash-hero.mp4" autoplay muted loop playsinline preload="auto" aria-label="Slash app preview"></video>
+            </div>
         </div>
     </section>
 
     <section class="grid-section">
         <div class="container">
             <h2>The cheat sheet.</h2>
-            <p class="lead">Most candidates draw this on the dry-erase booklet before the questions start. Same grid is in the app, one tap from anywhere.</p>
+            <p class="lead">Most candidates draw this on the laminated sheet before the questions start. Same grid is in the app, one tap from anywhere.</p>
             <div class="magic-grid" aria-label="The magic-number grid">
                 <div class="cell accent">128</div><div class="cell accent">64</div><div class="cell accent">32</div><div class="cell accent">16</div><div class="cell accent">8</div><div class="cell accent">4</div><div class="cell accent">2</div><div class="cell accent">1</div>
                 <div class="cell">128</div><div class="cell">192</div><div class="cell">224</div><div class="cell">240</div><div class="cell">248</div><div class="cell">252</div><div class="cell">254</div><div class="cell">255</div>
